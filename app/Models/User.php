@@ -41,4 +41,36 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function hasRole($role)
+    {
+        // $role = ['peserta','pengajar','lpk','pegawai','keuangan','admin'];       
+        return $this->role === $role;
+    }
+
+    public function master()
+    {
+        $master = ['admin'];
+        
+        if(in_array($this->role,$master))
+        {
+            return true;
+        }        
+    }
+
+    public function participant()
+    {
+        $master = ['peserta'];
+        
+        if(in_array($this->role,$master))
+        {
+            return true;
+        }        
+    }
+
+    public function psa()
+    {
+        return $this->hasOne(Participant::class, 'users_id', 'id');   
+    }
 }
