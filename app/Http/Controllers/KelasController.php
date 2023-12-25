@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Alert;
+use App\Models\Head;
+use App\Models\Paid;
+use DB;
+use App\Rules\Status;
 
 class KelasController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('IsRole:admin');
+        $this->middleware('IsPermission:kelas');
     }
     /**
      * Display a listing of the resource.
@@ -20,6 +24,34 @@ class KelasController extends Controller
         $class = Kelas::all();
         $data = 'Data class';
         return view('class.index',compact('data','class'));    
+    }
+
+    public function verif()
+    {
+        $da = Head::with('test')->where('online',1)->get();
+        $data = 'Data Kelas';
+        return view('class.verif',compact('data','da'));    
+    }
+
+    public function verfied(Request $request, $id)
+    {
+        $head = Head::where(DB::raw('md5(id)'),$id)->first();  
+        if($head)
+        {
+            $head->offline = 1;
+            $head->save();
+
+            // Status::grade($head,'Offline Class',6); 
+
+           Alert::success('success', 'Update Successfully');
+        }
+        else
+        {
+            Alert::error('error', 'Invalid Data');
+        }
+
+
+        return back();
     }
 
     /**

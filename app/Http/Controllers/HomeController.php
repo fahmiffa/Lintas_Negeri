@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Payment;
+use App\Models\Kelas;
+use App\Models\Head;
+use App\Models\Exam;
 use Auth;
 use Alert;
 
@@ -18,7 +22,19 @@ class HomeController extends Controller
     {
         if(Auth::user()->participant())
         {
-            return view('participant');     
+            $head = Head::where('participant',Auth::user()->id)->first();
+            if($head)
+            {
+                $kelas = Kelas::where('name','Offline Class')->first();
+            }
+            else
+            {
+                $kelas = Kelas::where('name','Online Class')->first();
+            }
+
+            $da = Payment::all();
+            $exam = Exam::first();    
+            return view('participant',compact('da','kelas','head','exam'));     
         }
         else
         {

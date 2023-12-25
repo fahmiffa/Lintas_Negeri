@@ -98,13 +98,14 @@
 @endsection
 
 @push('js')    
-<script src="{{asset('assets/extensions/apexcharts/apexcharts.min.js')}}"></script>
-<script src="{{asset('assets/static/js/pages/dashboard.js')}}"></script>
-
 <script>
+
+@if(session('error'))
     var timeoutAlert = document.getElementById('timeoutAlert');
     setTimeout(function() {
         timeoutAlert.style.display = 'none';
     }, 3000); 
+@endif
+    
 </script>
 @endpush

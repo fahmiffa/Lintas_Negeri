@@ -27,8 +27,29 @@ Route::group(['middleware' => 'auth'], function() {
         Route::post('account', [App\Http\Controllers\HomeController::class, 'account'])->name('account');
         Route::resource('user', App\Http\Controllers\UserController::class);
         Route::resource('class', App\Http\Controllers\KelasController::class);
+        Route::get('kelas', [App\Http\Controllers\KelasController::class, 'verif'])->name('kelas.index');
+        Route::post('kelas/{id}', [App\Http\Controllers\KelasController::class, 'verfied'])->name('kelas.update');
+        Route::resource('exam', App\Http\Controllers\ExamController::class);
+        Route::resource('payment', App\Http\Controllers\PaymentController::class);
+        Route::resource('paid', App\Http\Controllers\HeadController::class);
+        Route::resource('job', App\Http\Controllers\JobController::class);
+        Route::get('pekerjaan', [App\Http\Controllers\JobController::class, 'verif'])->name('apply.index');
+        Route::post('pekerjaan-approve/{id}', [App\Http\Controllers\JobController::class, 'verfied'])->name('apply.update');
+        Route::post('pekerjaan-reject/{id}', [App\Http\Controllers\JobController::class, 'reject'])->name('apply.reject');
 
         // participant
-        Route::get('kelas', [App\Http\Controllers\Participant::class, 'class'])->name('kelas');
+        Route::get('pendaftaran-kelas', [App\Http\Controllers\Participant::class, 'class'])->name('kelas');
+        Route::post('pendaftaran-kelas/{id}', [App\Http\Controllers\Participant::class, 'store'])->name('daftar.store');
+        Route::get('pendaftaran-kelas/{id}', [App\Http\Controllers\Participant::class, 'daftar'])->name('daftar.index');
+        Route::get('exam-participant', [App\Http\Controllers\Participant::class, 'exam'])->name('xam');
+        Route::post('test/{id}', [App\Http\Controllers\Participant::class, 'test'])->name('test');
+        Route::post('data/{id}', [App\Http\Controllers\Participant::class, 'data'])->name('data');
+        Route::post('tested/{id}', [App\Http\Controllers\Participant::class, 'tested'])->name('tested');
+        Route::get('testing/{id}', [App\Http\Controllers\Participant::class, 'testing'])->name('testing');
+        Route::post('file-transfer/{id}', [App\Http\Controllers\Participant::class, 'pile'])->name('pile');
+        Route::get('payment-participant', [App\Http\Controllers\Participant::class, 'payment'])->name('pay');
+        Route::get('job-participant', [App\Http\Controllers\Participant::class, 'job'])->name('jobs');
+        Route::get('apply-job/{id}/{head}', [App\Http\Controllers\Participant::class, 'apply'])->name('apply');
+        Route::post('cv', [App\Http\Controllers\Participant::class, 'cv'])->name('cv');
     });
 });

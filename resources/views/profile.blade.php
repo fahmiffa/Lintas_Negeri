@@ -36,12 +36,8 @@
                                 <img src="{{asset('assets/compiled/jpg/1.jpg')}}" alt="Avatar">
                             </div>
 
-                            <h3 class="mt-3">{{auth()->user()->name}}</h3>
-                            @if(auth()->user()->participant())
-                            <p class="text-small">PSA <span class="text-capitalize">{{auth()->user()->psa->status}}</span></p>
-                            @else
-                            <p class="text-small">{{auth()->user()->role}}</p>
-                            @endif
+                            <h3 class="mt-3">{{auth()->user()->name}}</h3>                         
+                            <p class="text-small text-capitalize">{{auth()->user()->state}}</p>
                         </div>
                     </div>
                 </div>

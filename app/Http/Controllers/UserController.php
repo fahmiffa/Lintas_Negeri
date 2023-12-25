@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Rules\Status;
 use App\Models\Participant;
 use Illuminate\Http\Request;
 use Alert;
@@ -57,15 +58,6 @@ class UserController extends Controller
         $item->password = bcrypt($request->password);
         $item->status =1;
         $item->save();
-
-        if($item->role == 'peserta')
-        {
-            $par = new Participant;
-            $par->users_id = $item->id;
-            $par->status = 'new';
-            $par->save();
-        }
-
 
         Alert::success('success', 'Insert Successfully');
         return redirect()->route('user.index');

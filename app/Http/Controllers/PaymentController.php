@@ -4,15 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\payment;
 use Illuminate\Http\Request;
+use Auth;
+use Alert;
 
 class PaymentController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('IsPermission:payment');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $da = payment::all();  
+        $data = 'Data Payment';
+        return view('payment.index',compact('data','da'));    
     }
 
     /**
@@ -20,7 +29,8 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        //
+        $data = 'Create Payment';
+        return view('payment.create',compact('data')); 
     }
 
     /**
@@ -28,7 +38,23 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $rule = [            
+            'name' => 'required',   
+            'numbers' => 'required',    
+            'type' => 'required',        
+            ];
+
+        $request->validate($rule);
+
+        $pay = new Payment;
+        $pay->name = $request->name;
+        $pay->numbers = $request->numbers;
+        $pay->type = $request->type;        
+        $pay->save();
+
+
+        Alert::success('success', 'Insert Successfully');
+        return redirect()->route('payment.index');
     }
 
     /**
@@ -36,7 +62,7 @@ class PaymentController extends Controller
      */
     public function show(payment $payment)
     {
-        //
+     
     }
 
     /**
@@ -44,7 +70,8 @@ class PaymentController extends Controller
      */
     public function edit(payment $payment)
     {
-        //
+        $data = 'Edit Payment';
+        return view('payment.create',compact('data','payment')); 
     }
 
     /**
@@ -52,7 +79,23 @@ class PaymentController extends Controller
      */
     public function update(Request $request, payment $payment)
     {
-        //
+        $rule = [            
+            'name' => 'required',   
+            'numbers' => 'required',    
+            'type' => 'required',        
+            ];
+
+        $request->validate($rule);
+
+        $pay = $payment;
+        $pay->name = $request->name;
+        $pay->numbers = $request->numbers;
+        $pay->type = $request->type;        
+        $pay->save();
+
+
+        Alert::success('success', 'Insert Successfully');
+        return redirect()->route('payment.index');
     }
 
     /**
@@ -60,6 +103,8 @@ class PaymentController extends Controller
      */
     public function destroy(payment $payment)
     {
-        //
+        $payment->delete();
+        Alert::success('success', 'Delete Successfully');
+        return back();
     }
 }
