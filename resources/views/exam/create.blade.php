@@ -74,17 +74,39 @@
                                 </div>                            
                             </div>
                         </div>
-                        
+                                             
                         <div class="form-group row mb-3">
                             <label class="col-md-3">Question</label>
                             <div class="col-md-6">
-                                <div class="input-group">
-                                    <input type="number" min="1" class="form-control" id="nquest" name="nquest" required>    
-                                    <button class="btn btn-primary" onclick="question()" type="button"><i class="bi bi-file-earmark-plus"></i></button>         
+                                <div class="input-group d-none">
+                                    <input type="number" value="{{isset($exam) ? count($exam->question) : null}}"  min="1" class="form-control" id="nquest" name="nquest" required>    
+                                    <button class="btn btn-primary" onclick="question()" type="button">Tambah</button>         
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div id="q"></div>
+                                        <div id="q">
+                                            @isset($exam)                
+                                              @foreach($exam->question as $row)   
+                                                <div class="my-3">
+                                                    <label class="form-label">Number {{$loop->iteration}} : </label>
+                                                    <input type="text" class="form-control" value="{{$row->name}}" name="q[{{$loop->index}}]" placeholder="Question {{$loop->iteration}}" required="">
+                                                    <div class="my-3 form-group">
+                                                        @for($i=0; $i < 5; $i++)
+                                                        <div class="my-3 input-group">
+                                                            <span class="input-group-text">{{chr(65 + $i)}}</span>
+                                                            @php $opsi = 'opsi_'.strtolower(chr(65 + $i)); @endphp
+                                                            <input class="form-control" name="ans{{$loop->index}}[{{$i}}]" value="{{$row->$opsi}}" required="">
+                                                        </div>                 
+                                                        @endfor                                  
+                                                        <div class="my-3 input-group">
+                                                            <span class="input-group-text">Key</span>
+                                                            <input class="form-control" name="ans{{$loop->index}}[{{$i}}]" value="{{$row->key}}" required="">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                              @endforeach
+                                            @endif
+                                        </div>
                                     </div>
                                 </div> 
                             </div>                         

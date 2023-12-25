@@ -115,7 +115,27 @@ class ExamController extends Controller
         $exam->users_id = Auth::user()->id;
         $exam->save();
 
-        Alert::success('success', 'Insert Successfully');
+
+        $question = $request->q;
+
+        $qs = Question::where('exams_id',$exam->id)->delete();   
+        
+        for ($i=0; $i < count($question); $i++) { 
+            $par = 'ans'.$i;
+            $ans = $request->$par;
+            $q = new Question;
+            $q->exams_id = $exam->id;
+            $q->name = $question[$i];
+            $q->opsi_a = $ans[0];
+            $q->opsi_b = $ans[1];
+            $q->opsi_c = $ans[2];
+            $q->opsi_d = $ans[3];
+            $q->opsi_e = $ans[4];
+            $q->key = $ans[5];
+            $q->save(); 
+        }
+
+        Alert::success('success', 'Update Successfully');
         return redirect()->route('exam.index');
     }
 
