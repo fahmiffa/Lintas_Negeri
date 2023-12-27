@@ -77,7 +77,8 @@ class Participant extends Controller
     {
         $users = Auth::user()->id;
         $head = Head::where('participant',$users)->whereNotIn('status',[0,1])->first();   
-        $class = Kelas::where(DB::raw('md5(id)'),$id)->first(); 
+        $class = Kelas::where(DB::raw('md5(id)'),$id)->first();
+        $exam = Exam::where(DB::raw('md5(id)'),$id)->first();
         $job = Job::where(DB::raw('md5(id)'),$id)->first();   
         $st = (int) Auth::user()->stat; 
         $var = $st + 1;     

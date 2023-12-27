@@ -7,6 +7,7 @@ use App\Models\Apply;
 use App\Models\Head;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Data;
 use Alert;
 use DB;
 use App\Rules\Status;
@@ -15,7 +16,7 @@ class JobController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('IsPermission:apply');
+        $this->middleware('IsPermission:job');
     }
     /**
      * Display a listing of the resource.
@@ -33,6 +34,22 @@ class JobController extends Controller
         $da = Apply::all();
         $data = 'Data Pekerjaan';
         return view('job.verif',compact('data','da'));    
+    }
+
+    public function doc($id)
+    {           
+        $apply = Apply::where(DB::raw('md5(id)'),$id)->first();    
+        if($apply)
+        {
+            $name = 'CV'.$apply->users_id.''.$apply->head.''.date('Ymd').'.doc';
+            $data = data::where('users_id',$apply->users_id)->first();
+            return view('participant.doc',compact('data','apply','name'));       
+        }
+        else
+        {
+            Alert::error('error', 'Invalid Data');
+            return back();
+        }
     }
 
     public function verfied(Request $request, $id)

@@ -17,11 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'sign'])->name('sign');
 Route::get('/', [App\Http\Controllers\AuthController::class, 'login'])->name('home');
+Route::get('/daftar', [App\Http\Controllers\AuthController::class, 'reg'])->name('daftar');
+Route::post('/daftar', [App\Http\Controllers\AuthController::class, 'daftar'])->name('reg');
 Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => 'auth'], function() {
     
-    Route::group(['prefix'=>'dashboard'],function() {
+    Route::group(['prefix'=>'home'],function() {
         Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
         Route::get('profile', [App\Http\Controllers\HomeController::class, 'profile'])->name('profile');
         Route::post('account', [App\Http\Controllers\HomeController::class, 'account'])->name('account');
@@ -36,6 +38,7 @@ Route::group(['middleware' => 'auth'], function() {
         Route::get('pekerjaan', [App\Http\Controllers\JobController::class, 'verif'])->name('apply.index');
         Route::post('pekerjaan-approve/{id}', [App\Http\Controllers\JobController::class, 'verfied'])->name('apply.update');
         Route::post('pekerjaan-reject/{id}', [App\Http\Controllers\JobController::class, 'reject'])->name('apply.reject');
+        Route::get('doc/{id}', [App\Http\Controllers\JobController::class, 'doc'])->name('doc');
 
         // participant
         Route::get('pendaftaran-kelas', [App\Http\Controllers\Participant::class, 'class'])->name('kelas');

@@ -11,6 +11,10 @@ use Alert;
 
 class ExamController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('IsPermission:exam');
+    }
     /**
      * Display a listing of the resource.
      */

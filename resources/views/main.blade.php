@@ -89,6 +89,7 @@
                     <div class="card-body">
                         <div id="chart-profile-visit"></div>
                     </div>
+                    
                 </div>
             </div>
         </div>   
@@ -108,4 +109,7 @@
 @endif
     
 </script>
+
+<script src="https://zuramai.github.io/mazer/demo/assets/extensions/apexcharts/apexcharts.min.js"></script>
+<script src="https://zuramai.github.io/mazer/demo/assets/static/js/pages/dashboard.js"></script>
 @endpush

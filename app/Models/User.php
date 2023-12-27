@@ -96,6 +96,41 @@ class User extends Authenticatable
 
     public function hasPermission($per)
     {
+
+        if($per == 'master')
+        {
+            $par = ['admin'];       
+
+            if(in_array($this->role,$par))
+            {            
+                return true;
+            }     
+
+        }
+
+
+        if($per == 'job')
+        {
+            $par = ['pegawai','admin'];       
+
+            if(in_array($this->role,$par))
+            {            
+                return true;
+            }     
+
+        }
+
+        if($per == 'guru' || $per == 'kelas' || $per == 'exam')
+        {
+            $par = ['admin','pengajar'];       
+
+            if(in_array($this->role,$par))
+            {            
+                return true;
+            }     
+
+        }
+
         if($per == 'payment')
         {
             $par = ['keuangan','admin'];       
@@ -107,7 +142,8 @@ class User extends Authenticatable
 
         }
 
-        if($per == 'kelas' || $per == 'apply')
+        // pegawai
+        if($per == 'verif' || $per == 'job' || $per == 'kelas')
         {
             $par = ['pegawai','admin'];       
 

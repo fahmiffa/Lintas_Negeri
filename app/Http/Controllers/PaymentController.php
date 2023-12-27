@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\payment;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Auth;
 use Alert;
@@ -19,7 +19,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $da = payment::all();  
+        $da = Payment::all();  
         $data = 'Data Payment';
         return view('payment.index',compact('data','da'));    
     }

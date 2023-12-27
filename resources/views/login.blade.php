@@ -51,8 +51,11 @@
                                 <i class="bi bi-shield-lock"></i>
                             </div>
                             @error('password')<div class='small text-danger text-left'>{{$message}}</div>@enderror
-                        </div>              
-                        <button class="btn btn-primary shadow-lg mt-3">Log in</button>
+                        </div>           
+                        <p>Belum punya akun ?
+                            <a href="{{route('daftar')}}" class="badge bg-dark rounded-pill">Daftar</a>
+                        </p>   
+                        <button class="btn btn-primary rounded-pill btn-block shadow-lg mt-3">Log in</button>
                     </form>
                 </div>
             </div>   
@@ -70,5 +73,7 @@
         }, 3000); 
     </script>
 @endif
+
+@include('sweetalert::alert')
 </body>
 </html>
