@@ -23,6 +23,8 @@ Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->n
 
 Route::group(['middleware' => 'auth'], function() {
     
+    Route::resource('log', App\Http\Controllers\LogController::class);
+    
     Route::group(['prefix'=>'home'],function() {
         Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
         Route::get('profile', [App\Http\Controllers\HomeController::class, 'profile'])->name('profile');
@@ -31,13 +33,17 @@ Route::group(['middleware' => 'auth'], function() {
         Route::resource('class', App\Http\Controllers\KelasController::class);
         Route::get('kelas', [App\Http\Controllers\KelasController::class, 'verif'])->name('kelas.index');
         Route::post('kelas/{id}', [App\Http\Controllers\KelasController::class, 'verfied'])->name('kelas.update');
+        Route::resource('third', App\Http\Controllers\ThirdController::class);
+        Route::resource('student', App\Http\Controllers\StudentController::class);
         Route::resource('exam', App\Http\Controllers\ExamController::class);
         Route::resource('payment', App\Http\Controllers\PaymentController::class);
         Route::resource('paid', App\Http\Controllers\HeadController::class);
+        Route::post('paid-reject/{id}', [App\Http\Controllers\HeadController::class, 'reject'])->name('paid.reject');
         Route::resource('job', App\Http\Controllers\JobController::class);
         Route::get('pekerjaan', [App\Http\Controllers\JobController::class, 'verif'])->name('apply.index');
         Route::post('pekerjaan-approve/{id}', [App\Http\Controllers\JobController::class, 'verfied'])->name('apply.update');
         Route::post('pekerjaan-reject/{id}', [App\Http\Controllers\JobController::class, 'reject'])->name('apply.reject');
+        Route::get('interview', [App\Http\Controllers\JobController::class, 'interview'])->name('interview.index');
         Route::get('doc/{id}', [App\Http\Controllers\JobController::class, 'doc'])->name('doc');
 
         // participant

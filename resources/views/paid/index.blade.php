@@ -57,16 +57,21 @@
                                     </a>
                                 </td>
                                 <td>{{number_format($item->kelas->price,0,",",".")}}</td>                                                                        
-                                <td>{!! ($item->status == 1) ? '<span class="badge bg-success">Success</span>' : '<span class="badge bg-danger">On progress</span>' !!}</td>                                                  
                                 <td>
-                                    @if($item->status == 1)
-                                        <button type="button" class="btn btn-sm btn-success"><i class="bi bi-check-lg"></i></button>
-                                    @else                                    
-                                    <form onsubmit="return confirm('Apakah Anda Yakin Memverifikasi ?');" action="{{ route('paid.update', md5($item->id)) }}" method="POST">                                        
-                                        @csrf
-                                        @method('patch')                                        
-                                        <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-check-lg"></i></button>
-                                    </form>
+                                    {!! ($item->status == 1) ? '' : '' !!}
+                                    @if($item->status == 0)
+                                        <span class="badge bg-warning">On progress</span>
+                                    @elseif($item->status == 1)
+                                        <span class="badge bg-success">Success</span>
+                                    @else
+                                        <span class="badge bg-danger">Reject</span>
+                                    @endif
+                                </td>                                                  
+                                <td>
+                                    @if($item->status == 0)
+                                        <button type="button" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" href="#ver{{$item->id}}">Verifikasi</button>
+                                    @else                                                             
+                                        <button type="button" class="btn btn-sm btn-success rounded-pill">Telah diverifikasi</button>
                                     @endif
                             </td>      
                             </tr>            
@@ -78,23 +83,72 @@
         </div>
 
         @foreach($da as $item)
-        <div class="modal fade" id="open{{$item->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Detail payment</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal fade" id="open{{$item->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Detail payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="{{asset('assets/image/'.$item->img)}}" class="w-75">
+                        <p>Waktu : {{$item->created_at}}</p>              
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>      
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <img src="{{asset('assets/image/'.$item->img)}}" class="w-75">
-                    <p>Waktu : {{$item->created_at}}</p>              
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>      
-                </div>
-              </div>
             </div>
-        </div>
+
+            <div class="modal fade" id="ver{{$item->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Verifikasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">              
+                            <p class="">Anda akan mengubah status pembayaran ?</p>
+                            <div class="d-flex justify-content-start">
+                                <form action="{{ route('paid.update', md5($item->id)) }}" method="POST">    
+                                @method('PATCH')                                        
+                                    @csrf                    
+                                    <button class="btn btn-success rounded-pill btn-block">Setuju</button>
+                                </form> 
+                                <div class="p-1"></div>
+                                {{-- <button type="button" class="btn btn-danger rounded-pill" data-bs-toggle="modal" href="#reject{{$item->id}}">Tolak</button>                         --}}
+                            </div>
+                        </div>
+                    </div>              
+                </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="reject{{$item->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Verifikasi di Tolak</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <form action="{{ route('paid.reject', ['id'=>md5($item->id)]) }}" method="POST">    
+                                @csrf    
+                                <div class="form-group row mb-3">
+                                    <label>Keterangan</label>
+                                    <textarea class="form-control" rows="2" name="ket" required>{{old('ket')}}</textarea>   
+                                    <small class="text-danger">Masukan Keterangan jika pembayaran, di tolak</small>                                                       
+                                </div>
+                                <button class="btn btn-danger rounded-pill">Tolak</button>
+                            </form>                
+                        </div>
+                    </div>              
+                </div>
+                </div>
+            </div>
         @endforeach     
     </section>
     <!-- Basic Tables end -->

@@ -43,8 +43,9 @@ class PaymentController extends Controller
             'numbers' => 'required',    
             'type' => 'required',        
             ];
+        $message = ['required'=>'field ini harus disi'];
 
-        $request->validate($rule);
+        $request->validate($rule,$message);
 
         $pay = new Payment;
         $pay->name = $request->name;

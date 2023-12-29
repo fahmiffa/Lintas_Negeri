@@ -24,7 +24,7 @@ class HeadController extends Controller
     public function index()
     {
         $data = 'Payment List';
-        $da = Paid::all();
+        $da = Paid::withTrashed()->get();
         return view('paid.index',compact('da','data'));   
     }
 
@@ -39,11 +39,6 @@ class HeadController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
-    }
-
     /**
      * Display the specified resource.
      */
@@ -87,7 +82,8 @@ class HeadController extends Controller
             $paid->save();
             
             $var = 1 + $st;
-            Status::grade($head,'verified payment '.$paid->kelas->name,$var);                 
+            Status::grade($head,'verified payment '.$paid->kelas->name,$var);   
+            Status::log('verified payment '.$paid->kelas->name);                             
             Alert::success('success', 'Verif Successfully');
         }
         else
@@ -96,6 +92,39 @@ class HeadController extends Controller
         }
 
         return back();
+    }
+
+    public function reject(Request $request, $id)
+    { 
+        if($request->ket == null)
+        {
+            Alert::error('info', 'Keterangan wajib disi, jika di tolak');
+            return back()->withInput();
+        }
+        
+        $paid = Paid::where(DB::raw('md5(id)'),$id)->first();
+        $head = Head::where('id',$paid->head)->first();
+        if($head && $paid)
+        {                 
+            $st = $head->user->stat;    
+
+            $paid->status   = 2;
+            $paid->ket       = $request->ket;
+            $paid->employee = Auth::user()->id;
+            $paid->save();
+            
+            $par = Participant::where('head',$head->id)->first();
+            $par->delete();
+            $head->delete();
+            $paid->delete();
+            Alert::success('success', 'Verif Successfully');
+        }
+        else
+        {
+            Alert::error('info', 'invalid Request');
+        }
+
+        return back()->withInput();
     }
 
     /**

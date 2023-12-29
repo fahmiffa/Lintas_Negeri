@@ -63,9 +63,8 @@ class User extends Authenticatable
     public function getstatAttribute()
     {                
         if($this->role == 'peserta')
-        {
-            $da = Participant::where('users_id',$this->id)->latest()->first();
-            // $da = Participant::where('users_id',$this->id)->where('status',2)->latest()->first();        
+        {          
+            $da = Participant::where('users_id',$this->id)->latest('created_at')->first();     
             return ($da) ? $da->status : 0;
         }
         else
@@ -105,7 +104,16 @@ class User extends Authenticatable
             {            
                 return true;
             }     
+        }
 
+        if($per == 'lpk')
+        {
+            $par = ['lpk'];       
+
+            if(in_array($this->role,$par))
+            {            
+                return true;
+            }     
         }
 
 
@@ -153,16 +161,6 @@ class User extends Authenticatable
             }     
 
         }
-    }
-
-    public function master()
-    {
-        $master = ['admin'];
-        
-        if(in_array($this->role,$master))
-        {
-            return true;
-        }        
     }
 
     public function participant()

@@ -66,7 +66,7 @@
                             <div class="col-md-6">
                                 <select class="choices form-select" name="role">
                                     @foreach($role as $item)
-                                    <option value="{{$item}}"  @selected(isset($user) && $user->role == $item)>{{$item}}</option>
+                                    <option value="{{$item}}"  @selected(isset($user) && $user->role == $item)>{{ucfirst($item)}}</option>
                                     @endforeach                       
                                 </select>
                                 @error('role')<div class='small text-danger text-left'>{{$message}}</div>@enderror

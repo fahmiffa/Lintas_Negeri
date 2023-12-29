@@ -1,17 +1,27 @@
 @extends('layout.base')     
 @section('main')
 <div class="page-heading px-3">
-    <h2 class="card-title">{{$data}}</h2>
+    <div class="row">
+        <div class="col-12 col-md-6 order-md-1 order-last">    
+            <h4>{{$data}}</h4>    
+        </div>
+        <div class="col-12 col-md-6 order-md-2 order-first">
+            @if($head)
+            <p class="text-muted small float-end">Nomor Registrasi : {{$head->registrasi}}</p>
+            @endif
+        </div>
+    </div>  
 </div>
 <div class="page-content">
-    <div class="card card-body px-5">
+    <div class="card">
+    <div class="card-body px-5">
         @php
             // varifikasi pembayaran
             $st = auth()->user()->stat;    
             $pay =[1,4]; 
 
             // state 
-            $state = [8,9,11];
+            $state = [8,9];
         @endphp
         @if($head)
         <div class="flex-row"> 
@@ -52,11 +62,55 @@
                     <div class="divider-text h6">{{auth()->user()->state}}</div>                    
                 </div>   
             @elseif($st == 10)
+                <div class="divider divider-left">
+                    <div class="divider-text h6">{{auth()->user()->state}}</div>
+                </div>
+                @if($apply)                
+                <div class="table-responsive w-50">
+                    <table class="table table-borderless">          
+                        <tbody>
+                          <tr>
+                            <td>Tanggal</td>
+                            <td>: {{date('d-M-Y',strtotime($apply->interview))}}</td>             
+                          </tr>
+                          <tr>
+                            <td>Tempat</td>
+                            <td>: {{$apply->job->name}}, {{$apply->job->interview}}</td>   
+                          </tr>         
+                        </tbody>
+                    </table>                          
+                </div>
+                @endif
+            @elseif($st == 11 && $head->job == 1)
+                <div class="divider divider-left-center">
+                    <div class="divider-text h6">Pembayaran {{$kelas->name}}</div>
+                </div>
+                @include('participant.kelas');  
+            @elseif($st == 11 && $head->job != 1)
+                <div class="divider divider-center">
+                    <div class="divider-text h6 text-danger">{{auth()->user()->state}}</div>
+                    <p>Anda akan kembali ke Offline Class</p>
+                </div>
+           
+            @elseif($st == 13 && $head->work == 1)
                 <div class="divider divider-center">
                     <div class="divider-text h6">{{auth()->user()->state}}</div>
                 </div>
                 @if($apply)                
-                    <p class="text-center text-danger">{{date('d-M-Y',strtotime($apply->interview))}}</p>
+                <div class="table-responsive w-25">
+                    <table class="table table-borderless">          
+                        <tbody>
+                            <tr>
+                            <td>Perushaan</td>
+                            <td>: {{$apply->job->name}}</td>             
+                            </tr>
+                            <tr>
+                            <td>Bagian</td>
+                            <td>: {{$apply->job->section}}</td>   
+                            </tr>         
+                        </tbody>
+                    </table>                          
+                </div>
                 @endif
             @else
                 <div class="divider divider-center">
@@ -73,14 +127,15 @@
                         </div>
                     @endforeach
             @endif
-        </div> 
+        </div>    
         @else
             <div class="divider divider-left-center">
                 <div class="divider-text h6">Pembayaran {{$kelas->name}}</div>
             </div>
             @include('participant.kelas');             
-        @endif
+        @endif  
     </div>
+</div>
 </div>
 
 @endsection

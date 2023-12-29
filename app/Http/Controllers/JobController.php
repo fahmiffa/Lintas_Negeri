@@ -31,9 +31,16 @@ class JobController extends Controller
 
     public function verif()
     {
-        $da = Apply::all();
-        $data = 'Data Pekerjaan';
+        $da = Apply::withTrashed()->get();
+        $data = 'Data CV';
         return view('job.verif',compact('data','da'));    
+    }
+
+    public function interview()
+    {
+        $da = Apply::withTrashed()->get();
+        $data = 'Data interview';
+        return view('job.interview',compact('data','da'));    
     }
 
     public function doc($id)
@@ -42,8 +49,11 @@ class JobController extends Controller
         if($apply)
         {
             $name = 'CV'.$apply->users_id.''.$apply->head.''.date('Ymd').'.doc';
+            $doc = true;
+            $path = public_path('/assets/compiled/jpg/1.jpg');
+            $image = "data:image/png;base64,".base64_encode(file_get_contents($path));
             $data = data::where('users_id',$apply->users_id)->first();
-            return view('participant.doc',compact('data','apply','name'));       
+            return view('participant.doc',compact('data','apply','name','doc','image','path'));       
         }
         else
         {
@@ -68,6 +78,7 @@ class JobController extends Controller
                 $apply->status = 1;
                 $apply->save();
                 Status::grade($head,'Interview',$var); 
+                Status::log('Interview '.$user->name. ' di '.$apply->job->name); 
             }
 
             if($st == 9)
@@ -77,11 +88,25 @@ class JobController extends Controller
                 $head->status = 2;
                 $head->save();
     
-    
-                $apply->status = 3;
+          
                 $apply->interview = $request->date;
                 $apply->save();
                 Status::grade($head,'Jadwal Interview',$var); 
+                Status::log('Meyetujui jadwal Interview '.$user->name. ' di '.$apply->job->name); 
+            }
+
+            if($st == 10)
+            {                                
+                $head = Head::where('participant',$apply->users_id)->whereNotIn('status',[0,1])->first(); 
+                $head->job = 1;
+                $head->status = 2;
+                $head->save();
+    
+          
+                $apply->status = 3;
+                $apply->save();
+                Status::grade($head,'Verfikasi interview diterima',$var); 
+                Status::log('Menerima verfikasi interview'.$user->name.' di '.$apply->job->name); 
             }
             
 
@@ -98,30 +123,33 @@ class JobController extends Controller
 
     public function reject(Request $request, $id)
     {
-        $apply = Apply::where(DB::raw('md5(id)'),$id)->first();          
+        $apply = Apply::where(DB::raw('md5(id)'),$id)->first();       
+
         if($apply)
         {
             $user = User::where('id',$apply->users_id)->first();
             $st = $user->stat;
-            $var = $st + 3;
+            $var = $st + 1;
             $head = Head::where('participant',$apply->users_id)->whereNotIn('status',[0,1])->first(); 
-            $head->job = null;
-            $head->offline = null;
+            $head->job = null;   
             $head->save();
 
-
             $apply->status = 2;
+            $apply->note   = $request->ket;
             $apply->save();
 
-           Status::grade($head,'Reject Job',$var); 
-           Alert::success('success', 'Update Successfully');
+            
+            // Status::grade($head,'Verfikasi interview ditolak',$var); 
+            Status::grade($head,'Offline Class',7); 
+            Status::log('Menolak verfikasi interview '.$user->name.' di '.$apply->job->name); 
+            
+            $apply->delete();
+            Alert::success('success', 'Update Successfully');
         }
         else
         {
             Alert::error('error', 'Invalid Data');
         }
-
-
         return back();
     }
 

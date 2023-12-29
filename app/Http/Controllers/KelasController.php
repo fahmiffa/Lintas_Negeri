@@ -41,16 +41,13 @@ class KelasController extends Controller
             $head->offline = 1;
             $head->save();
 
-            // Status::grade($head,'Offline Class',6); 
-
+            Status::log('Verifikasi Offline Class'); 
            Alert::success('success', 'Update Successfully');
         }
         else
         {
             Alert::error('error', 'Invalid Data');
         }
-
-
         return back();
     }
 
@@ -73,7 +70,9 @@ class KelasController extends Controller
             'price' => 'required',                                 
             ];
 
-        $request->validate($rule);
+        $message = ['required'=>'Field ini harus disi'];
+
+        $request->validate($rule,$message);       
 
         $price = str_replace(['.'],null,$request->price);   
         $item = new Kelas;

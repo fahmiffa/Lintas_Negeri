@@ -39,7 +39,7 @@
                                 <th>No.</th>
                                 <th>User</th>   
                                 <th>Kelas</th> 
-                                <th>Point</th>                                
+                                <th>Point Ujian</th>                                
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -52,11 +52,9 @@
                                 <td>{{$item->test->val}}</td>                                                                        
                                 <td>
                                     @if($item->offline == 1)
-                                        <button type="button" class="btn btn-sm btn-success"><i class="bi bi-check-lg"></i></button>
-                                    @elseif($item->user->stat == 5)                                    
-                                        <form onsubmit="return confirm('Apakah Anda Yakin Memverifikasi menjadi kelas Offline?');" action="{{ route('kelas.update', md5($item->id)) }}" method="POST">@csrf                                                                    
-                                            <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-check-lg"></i></button>
-                                        </form>
+                                        <button type="button" class="btn btn-sm btn-success rounded-pill">Approve</button>   
+                                    @elseif($item->user->stat == 5)                                                              
+                                        <button type="button" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" href="#ver{{$item->id}}">Verifikasi</button>
                                     @endif
                             </td>      
                             </tr>                              
@@ -85,6 +83,29 @@
               </div>
             </div>
         </div>
+
+        <div class="modal fade" id="ver{{$item->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="staticBackdropLabel">Verifikasi Kelas</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">            
+                        <p class="">Anda akan mengubah menjadi Class Offline ?</p>
+                        <div class="d-flex justify-content-start">
+                            <form action="{{route('kelas.update', md5($item->id))}}" method="post">    
+                                @csrf                    
+                                <button class="btn btn-success rounded-pill btn-block">Setuju</button>
+                            </form>                   
+                        </div>
+                    </div>
+                </div>              
+              </div>
+            </div>
+        </div>
+
         @endforeach     
     </section>
     <!-- Basic Tables end -->

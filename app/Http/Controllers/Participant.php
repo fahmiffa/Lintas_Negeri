@@ -52,7 +52,16 @@ class Participant extends Controller
     {
         $users = Auth::user()->id;
         $head = Head::where('participant',$users)->whereNotIn('status',[0,1])->first();   
-        $kelas = Kelas::where('name','Offline Class')->first();
+
+        if($head->job == 1)
+        {
+            $kelas = Kelas::where('state','job')->first();
+        }
+        else
+        {            
+            $kelas = Kelas::where('state','offline')->first();
+        }
+
         $apply = Apply::where('users_id',$users)->first();   
         $da = Payment::all();
         $exam = Exam::first();    
@@ -60,7 +69,7 @@ class Participant extends Controller
         $st = (int) Auth::user()->stat; 
 
         $test = Test::where('users_id',$users)->where('status',0)->first();
-        if($test)
+        if($test && $head)
         {        
             $data = 'Test '.$test->exam->kelas->name;
             return view('user.exam.test',compact('test','data'));  
@@ -114,7 +123,8 @@ class Participant extends Controller
             $paid->img   = $piles;
             $paid->save();
 
-            Status::grade($head,$class->name,$var);     
+            Status::grade($head,$class->name,$var);    
+            Status::log('Pendataran '.$class->name);     
 
             return redirect()->route('daftar.index',['id'=>md5($head->id)]);
 
@@ -123,7 +133,6 @@ class Participant extends Controller
         // identitas
         else if($st == 2)
         {
-   
             $rule = [            
                 'alamat'       => 'required',      
                 'place_birth' => 'required',      
@@ -146,8 +155,21 @@ class Participant extends Controller
             $data->religion = $request->religion;
             $data->tall = $request->tall;
             $data->weight = $request->weight;
-            $data->blood = $request->blood;
+            $data->power = $request->power;
+            $data->hand = $request->hand;
+            $data->look = $request->look;
+            $data->blood = $request->blood;            
             $data->hobbies = $request->hobbies;
+            $data->me = $request->me;
+            $data->job_des = $request->job_des;
+            $data->magang_des = $request->magang_des;
+            $data->sick = $request->has('sick') ? 1 : 0;
+            $data->accident = $request->has('accident') ? 1 : 0;
+            $data->japan = $request->has('japan') ? 1 : 0;
+            $data->smoker = $request->has('smoker') ? 1 : 0;
+            $data->alkohol = $request->has('alkohol') ? 1 : 0;
+            $data->skill = $request->skill;
+            $data->learning = $request->learning;
             $data->dad = json_encode([$request->dad,$request->ageDad]);
             $data->mom = json_encode([$request->mom,$request->ageMom]);
             $data->sis = json_encode([$request->sis,$request->ageSis]);
@@ -183,9 +205,43 @@ class Participant extends Controller
  
                $data->study = json_encode($studied);           
             }   
+
+            if(count($request->lin) > 0)
+            {
+               $lisensi = $request->lin;
+               $level = $request->level;     
+               $time = $request->time;     
+ 
+               for ($i=0; $i < count($lisensi); $i++) {        
+                 if($lisensi[$i] != null)
+                 {
+                     $license[] = [$lisensi[$i],$level[$i],$time[$i]];
+                 }         
+               }
+ 
+               $data->lisensi = json_encode($license);           
+            } 
+            
+            if(count($request->magang) > 0)
+            {
+               $magang = $request->magang;
+               $magangPeriod = $request->magangPeriod;     
+               $ind = $request->ind;     
+ 
+               for ($i=0; $i < count($magang); $i++) {        
+                 if($magang[$i] != null)
+                 {
+                     $mag[] = [$magang[$i],$magangPeriod[$i],$ind[$i]];
+                 }         
+               }
+ 
+               $data->magang = json_encode($mag);           
+            } 
+
             $data->save();
             
             Status::grade($head,'Inserted Indentity',$var); 
+            Status::log('melengkapi data detail identitias');   
 
             return back();
 
@@ -200,6 +256,7 @@ class Participant extends Controller
             $test->save();
  
             Status::grade($head,'Exam start',$var);
+            Status::log('memulai Ujian test Online');   
             return redirect()->route('testing',['id'=>md5($test->id)]);
         }
         else if($st == 4)
@@ -225,6 +282,7 @@ class Participant extends Controller
             $test->save();
 
             Status::grade($head,'Exam Tested',$var);  
+            Status::log('mengakhiri Ujian test Online');   
 
             return redirect()->route('daftar.index',['id'=>md5($head->id)]);
         }
@@ -259,12 +317,13 @@ class Participant extends Controller
             $paid->save();
 
             Status::grade($head,$class->name,$var); 
+            Status::log('pendaftaran '.$class->name);   
             
             return back();
         }
         // apply job
         else if($st == 7 && $job)
-        {                           
+        {                             
             $rule = [            
                 'vid'       => 'required',                              
                 ];
@@ -280,6 +339,42 @@ class Participant extends Controller
             $apply->save();
 
             Status::grade($head,'Apply Job',$var);  
+            Status::log('Apply Job '.$job->name);   
+            return redirect()->route('daftar.index',['id'=>md5($head->id)]);
+        }
+
+        // job matching
+        else if($st == 11 && $head->job == 1)
+        {
+            $rule = [            
+                'file' => 'required|file|mimes:jpg,jpeg,png|max:2048',                       
+                ];
+            $message = [
+                        'required'=> 'File Transfer required',
+                        'mimes'=> 'Extension File invalid',
+                        'max'=> 'File size max 2Mb'
+                        ];
+    
+            $request->validate($rule,$message);
+
+            $pile = $request->file('file');               
+            $piles = 'tf_'.time().'.'.$pile->getClientOriginalExtension();
+            $destinationPath = public_path('assets/image');
+            $pile->move($destinationPath, $piles);            
+     
+            $head->work = 1;    
+            $head->save();
+
+            $paid        = new Paid;
+            $paid->head  = $head->id;
+            $paid->user  = $head->participant;
+            $paid->par   = $class->id;
+            $paid->img   = $piles;
+            $paid->save();
+
+            Status::grade($head,$class->name,$var);    
+            Status::log('Pembayaran '.$class->name);     
+
             return redirect()->route('daftar.index',['id'=>md5($head->id)]);
         }
         else
@@ -340,18 +435,24 @@ class Participant extends Controller
     {
         $user = Auth::user()->id;
         $data = Data::where('users_id',$user)->latest()->first();
-        $path = 'assets/cv/cv-'.$user.'.pdf';
+        $name = 'CV'.$user.''.date('Ymd').'.pdf';
+        $path = 'assets/cv/'.$name;
         $cv = new CV;
         $cv->users_id = $user;
-        $cv->file = $path;
-
+        $cv->pdf = $path;
         $cv->save();
-        $da = compact('data');
-        $pdf = Pdf::loadView('participant.cv',$da);               
+
+        Status::log('Generate CV');   
+
+        $imagePath = public_path('/assets/compiled/jpg/1.jpg');
+        $image = "data:image/png;base64,".base64_encode(file_get_contents($imagePath));
+        $doc = false;
+        $da = compact('data','name','doc','image');
+        $pdf = Pdf::loadView('participant.doc',$da);               
         $pdf->save(public_path($path));      
-        // return $pdf->stream();
-        // return view('participant.cv',$da);
         return back();
+        // return $pdf->stream();
+        // return view('participant.doc',$da);
     }
 
     public function payment()

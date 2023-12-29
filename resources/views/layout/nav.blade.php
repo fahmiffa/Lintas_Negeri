@@ -7,14 +7,14 @@
         </a>
     </li>                          
    
- 
+    @if(auth()->user()->hasPermission('master'))
     <li class="menu-item active has-sub">
         <a href="#" class='menu-link'>
             <span><i class="bi bi-stack"></i> Master</span>
         </a>
         <div class="submenu ">     
             <div class="submenu-group-wrapper">                                
-                <ul class="submenu-group">      
+                <ul class="submenu-group">               
 
                     @if(auth()->user()->hasPermission('master'))        
                     <li class="submenu-item {{ (Request::segment(2)) == 'user' ? 'active' : null }}">
@@ -48,7 +48,7 @@
 
                     @if(auth()->user()->hasPermission('master'))
                     <li class="submenu-item {{ (Request::segment(2)) == 'company' ? 'active' : null }}">
-                        <a href="{{route('user.index')}}"
+                        <a href="{{route('third.index')}}"
                             class='submenu-link'>LPK
                         </a>                       
                     </li>
@@ -65,8 +65,6 @@
             </div>
         </div>
     </li>     
-
-    @if(auth()->user()->hasPermission('payment'))
     <li class="menu-item">
         <a href="{{route('paid.index')}}" class='menu-link active'>
             <span><i class="bi bi-wallet"></i> Pembayaran</span>
@@ -74,18 +72,6 @@
     </li>                    
     @endif
 
-    @if(auth()->user()->hasPermission('verif'))    
-    <li class="menu-item">
-        <a href="{{route('kelas.index')}}" class='menu-link active'>
-            <span><i class="bi bi-bookmark-star-fill"></i> Kelas</span>
-        </a>
-    </li>      
-     <li class="menu-item">
-        <a href="{{route('apply.index')}}" class='menu-link active'>
-            <span><i class="bi bi-bookmark-check-fill"></i> Pekerjaan</span>
-        </a>
-    </li>                    
-    @endif
 </ul>
 </div>
 

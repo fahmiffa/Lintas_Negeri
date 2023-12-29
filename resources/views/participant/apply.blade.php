@@ -50,7 +50,7 @@
             
                 <!-- Modal body -->
                 <div class="modal-body">
-                    <iframe frameborder="0" src="{{asset($cv->file)}}" class="w-100" style="height:600px;width:600px;"  title="cv" allowfullscreen></iframe>                
+                    <iframe frameborder="0" src="{{asset($cv->pdf)}}" class="w-100" style="height:600px;width:600px;"  title="cv" allowfullscreen></iframe>                
                 </div>
             
                 <!-- Modal footer -->

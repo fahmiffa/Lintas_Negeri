@@ -3,6 +3,8 @@
 namespace App\Rules;
 
 use App\Models\Participant;
+use App\Models\Log;
+use Auth;
 
 class Status 
 {
@@ -18,7 +20,8 @@ class Status
 
    public static function state($id, $state)
    {   
-        $payment = [1,6];
+        $payment = [1,6,12];
+
         if($id == 0)
         {
             return 'Baru';
@@ -66,8 +69,28 @@ class Status
 
         if($id == 11)
         {
-            return 'Pengajuan Pekerjaan Anda di tolak';
+            return $state;
+        }   
+
+        if($id == 13)
+        {
+            return 'Silahkan melanjutkan proses tanda tangan kontrak';
         }   
 
    }
+
+   public static function log($logs)
+   {
+        $log            = New Log;
+        $log->users      = Auth::user()->id;
+        $log->activity  = $logs;
+        $log->save();
+   }
+
+  public static function gambar($val)
+  {
+        $imagePath = public_path($val); // Replace with your image path
+        $imageData = Image::make($imagePath)->encode('data-url')->encoded;
+        return $imageData;
+  }
 }

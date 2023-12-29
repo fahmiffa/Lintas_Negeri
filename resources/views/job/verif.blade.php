@@ -53,13 +53,10 @@
                                     @if($item->status == 0)
                                         <button type="button" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" href="#ver{{$item->id}}">Verifikasi</button>
                                     @else                                                 
-                                        @if($item->status == 1)
-                                            <button type="button" class="btn btn-sm btn-success rounded-pill">Approve</button>   
-                                            <button type="button" class="btn btn-sm btn-primary rounded-pill" data-bs-toggle="modal" href="#in{{$item->id}}">Interview</button>
+                                    @if($item->status == 1)
+                                            <button type="button" class="btn btn-sm btn-success rounded-pill">Approve</button>                                               
                                         @elseif($item->status == 2)                                  
-                                            <button type="button" class="btn btn-sm btn-danger rounded-pill">Reject</button>   
-                                        @else
-                                        <button type="button" class="btn btn-sm btn-success rounded-pill">Interviewed</button>   
+                                            <button type="button" class="btn btn-sm btn-danger rounded-pill">Reject</button>                                         
                                         @endif                              
                                     @endif
                             </td>      
@@ -93,7 +90,7 @@
                         </svg>
                         Download
                     </a>                    
-                    <iframe frameborder="0" src="{{asset($item->user->cv->file)}}" class="w-100" style="height:600px;width:600px;"  title="cv" allowfullscreen></iframe>                   
+                    <iframe frameborder="0" src="{{asset($item->user->cv->pdf)}}" class="w-100" style="height:600px;width:600px;"  title="cv" allowfullscreen></iframe>                   
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>      
@@ -106,11 +103,12 @@
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Verifikasi</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">Verifikasi CV</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="container">
+                        <p class="">Anda akan menerima cv, dan melanjutkan ke interview ?</p>
                         <div class="form-group row mb-3 d-none">
                             <label>Keterangan</label>
                             <textarea class="form-control" rows="3" name="alamat">{{old('alamat')}}</textarea>                                                          
@@ -120,41 +118,14 @@
                             <form action="{{route('apply.update',['id'=>md5($item->id)])}}" method="post" enctype="multipart/form-data">    
                                 @csrf                    
                                 <button class="btn btn-success rounded-pill btn-block">Setuju</button>
-                            </form> 
-                            <div class="p-1"></div>
-                            <form action="{{route('apply.reject',['id'=>md5($item->id)])}}" method="post" enctype="multipart/form-data">    
-                                @csrf                    
-                                <button class="btn btn-danger rounded-pill btn-block">Tolak</button>
-                            </form> 
+                            </form>                             
                         </div>
                     </div>
                 </div>              
               </div>
             </div>
         </div>
-
-        <div class="modal fade" id="in{{$item->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Set Interview</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container">                       
-                        <form action="{{route('apply.update',['id'=>md5($item->id)])}}" method="post" enctype="multipart/form-data">    
-                            @csrf         
-                            <div class="form-group">
-                                <label>Tanggal</label>
-                                <input type="date" name="date" class="form-control" required>                                                       
-                            </div>           
-                            <button class="btn btn-primary rounded-pill btn-sm w-25">Save</button>
-                        </form>                                               
-                    </div>
-                </div>              
-              </div>
-            </div>
-        </div>
+      
         @endforeach     
     </section>
     <!-- Basic Tables end -->
