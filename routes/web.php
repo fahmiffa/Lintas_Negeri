@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Mail\MyMail;
+use Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +14,20 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+Route::get('/mail', function () {
+   
+    $details = [
+        'title' => 'Mail from ItSolutionStuff.com',
+        'body' => 'This is for testing email using smtp'
+    ];
+    
+    Mail::to('faisol.ajifa@gmail.com')->send(new MyMail($details));
+    
+    dd("Email is Sent.");
+    
+});
 
 
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');
