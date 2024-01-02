@@ -76,7 +76,7 @@
                     </div>
                     <div class="container d-block d-lg-none">
                           <div class="d-flex justify-content-start">
-                             <a href="#" class="burger-btn d-block d-xl-none">
+                             <a href="#" class="burger-btn d-block d-xl-none d-none">
                                 <i class="bi bi-justify fs-3"></i>
                             </a>
                         </div>

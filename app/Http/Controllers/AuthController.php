@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use Auth;
 use Alert;
 use App\Models\User;
+use App\Mail\MyMail;
+use Mail;
+use DB;
+use Carbon\Carbon;
+
 
 class AuthController extends Controller
 {
@@ -26,6 +31,22 @@ class AuthController extends Controller
         return view('reg');
     } 
 
+    public function ver($id)
+    { 
+        $usr = User::where(DB::raw('md5(ver)'),$id)->where('status',2)->first();
+        if($usr)
+        {
+            $usr->status = 1;
+            $usr->save();
+
+            return redirect()->route('login')->with('info','Verifikasi akun berhasil');
+        }        
+        else
+        {
+            return redirect()->route('login')->with('error','Invalid link Verifikasi');
+        }
+    }
+
     public function daftar(Request $request)
     {
         $rule = [            
@@ -44,11 +65,28 @@ class AuthController extends Controller
         $item->hp = $request->hp;
         $item->role = 'peserta';
         $item->password = bcrypt($request->password);
-        $item->status =1;
+        $item->status = 2;   
         $item->save();
 
-        Alert::success('success', 'Register Successfully');
+        $ver = Carbon::parse($item->created_at)->timestamp;
+        $item->ver = $ver;
+        $item->save();
+
+
+        $link = route('ver',['id'=>md5($ver)]);
+        
+        $details = [     
+            'title' => 'Verifikasi akun',
+            'body'  => 'Klik link berikut untuk aktivasi akun peserta' ,
+            'par'   => $link  
+        ];
+        
+        Mail::to($request->email)->send(new MyMail($details));
+
+        Alert::success('success', 'Register Successfully, check email to verify');
         return redirect()->route('login');
+        
+    
     }
 
     public function sign(Request $request)
@@ -65,8 +103,19 @@ class AuthController extends Controller
         $credensil = $request->only('email','password');;
 
         if (Auth::attempt($credensil)) {
-            $user = Auth::user();                      
-            return redirect()->route('home');             
+
+            $user = Auth::user();            
+    
+            if($user->status == 1)
+            {
+                return redirect()->route('home');             
+            }
+            else
+            {
+                $request->session()->flush();
+                Auth::logout();
+                return back()->withInput()->with('error', 'Account not verified');
+            }    
         }                          
         return back()->withInput()->with('error', 'Account not found');
     }

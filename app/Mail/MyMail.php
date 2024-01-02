@@ -33,6 +33,6 @@ class MyMail extends Mailable
         // ->subject('Mail from '.ENV('APP_NAME'))
         // ->view('email.mail',['link'=>$this->link]);
         
-        return $this->subject('Mail from ItSolutionStuff.com')->view('mail');
+        return $this->subject('Verifikasi Email')->view('mail');
     }
 }

@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Mail\MyMail;
-use Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,18 +14,13 @@ use Mail;
 */
 
 
-Route::get('/mail', function () {
+// Route::get('/mail', function () {
    
-    $details = [
-        'title' => 'Mail from ItSolutionStuff.com',
-        'body' => 'This is for testing email using smtp'
-    ];
+
     
-    Mail::to('faisol.ajifa@gmail.com')->send(new MyMail($details));
+//     dd("Email is Sent.");
     
-    dd("Email is Sent.");
-    
-});
+// });
 
 
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login');
@@ -35,6 +28,7 @@ Route::post('/login', [App\Http\Controllers\AuthController::class, 'sign'])->nam
 Route::get('/', [App\Http\Controllers\AuthController::class, 'login'])->name('home');
 Route::get('/daftar', [App\Http\Controllers\AuthController::class, 'reg'])->name('daftar');
 Route::post('/daftar', [App\Http\Controllers\AuthController::class, 'daftar'])->name('reg');
+Route::get('/verifikasi/{id}', [App\Http\Controllers\AuthController::class, 'ver'])->name('ver');
 Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => 'auth'], function() {

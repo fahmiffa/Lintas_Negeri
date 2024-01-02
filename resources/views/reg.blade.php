@@ -67,7 +67,7 @@
                             @error('password')<div class='small text-danger text-left'>{{$message}}</div>@enderror
                         </div>   
                         <p>Sudah punya akun ?
-                            <a href="{{route('login')}}" class="badge bg-dark rounded-pill">Login</a>
+                            <a href="{{route('login')}}" class="badge bg-primary rounded-pill">Login</a>
                         </p>              
                         <button class="btn btn-primary btn-block rounded-pill shadow-lg mt-3">Daftar</button>
                     </form>

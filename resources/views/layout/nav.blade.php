@@ -64,12 +64,7 @@
                 </ul>                                
             </div>
         </div>
-    </li>     
-    <li class="menu-item">
-        <a href="{{route('paid.index')}}" class='menu-link active'>
-            <span><i class="bi bi-wallet"></i> Pembayaran</span>
-        </a>
-    </li>                    
+    </li>                        
     @endif
 
 </ul>

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Rules\Status;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -42,6 +43,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getkeyAttribute()
+    {                
+      return md5(Carbon::parse($this->created_at)->timestamp);
+    }
+
+    public function link($key)
+    {
+        $val = md5(Carbon::parse($this->created_at)->timestamp);
+        if($key == $val)
+        {
+            return true;
+        }        
+        else
+        {
+            return false;
+        }
+    }
 
     
     public function getstateAttribute()

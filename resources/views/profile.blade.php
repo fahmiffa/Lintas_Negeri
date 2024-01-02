@@ -70,7 +70,15 @@
                                     </div>
                                 </div>            
                                 <div class="form-group row mb-3">
-                                    <label class="col-md-3">Password</label>
+                                    <label class="col-md-3">Password Lama</label>
+                                    <div class="col-md-6">
+                                        <input type="password" name="old" value="{{isset($user) ? null : old('old')}}"   class="form-control">
+                                        @error('old')<div class='small text-danger text-left'>{{$message}}</div>@enderror
+                                    </div>
+                                </div>
+        
+                                <div class="form-group row mb-3">
+                                    <label class="col-md-3">Password Baru</label>
                                     <div class="col-md-6">
                                         <input type="password" name="password" value="{{isset($user) ? null : old('password')}}"   class="form-control">
                                         @error('password')<div class='small text-danger text-left'>{{$message}}</div>@enderror

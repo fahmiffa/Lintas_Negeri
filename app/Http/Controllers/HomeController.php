@@ -53,6 +53,7 @@ class HomeController extends Controller
     public function account(Request $request)
     {       
         $user = User::where('id',Auth::user()->id)->first();
+        
         $rule = [            
             'name' => 'required',
             'email' => 'required',

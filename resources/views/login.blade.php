@@ -36,6 +36,12 @@
                         </div>
                     @endif
 
+                    @if(session('info'))
+                    <div class="alert alert-success" id="timeoutAlert" role="alert">
+                            {{ session('info') }}
+                        </div>
+                    @endif
+
                     <form action="{{route('sign')}}" method="post">
                         @csrf
                         <div class="form-group position-relative has-icon-left mb-4">
@@ -53,7 +59,7 @@
                             @error('password')<div class='small text-danger text-left'>{{$message}}</div>@enderror
                         </div>           
                         <p>Belum punya akun ?
-                            <a href="{{route('daftar')}}" class="badge bg-dark rounded-pill">Daftar</a>
+                            <a href="{{route('daftar')}}" class="badge bg-primary rounded-pill">Daftar</a>
                         </p>   
                         <button class="btn btn-primary rounded-pill btn-block shadow-lg mt-3">Log in</button>
                     </form>
@@ -64,15 +70,25 @@
 
         
 @if(session('error'))
-    <script>
-    
-        var timeoutAlert = document.getElementById('timeoutAlert');
-    
+    <script>    
+        var timeoutAlert = document.getElementById('timeoutAlert');    
         setTimeout(function() {
             timeoutAlert.style.display = 'none';
         }, 3000); 
     </script>
 @endif
+
+@if(session('info'))
+    <script>    
+        var timeoutAlert = document.getElementById('timeoutAlert');    
+        setTimeout(function() {
+            timeoutAlert.style.display = 'none';
+        }, 3000); 
+    </script>
+@endif
+
+
+
 
 @include('sweetalert::alert')
 </body>
